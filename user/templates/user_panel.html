@@ -1,0 +1,16 @@
+<div class="billing-details">
+    <div class="section-title">
+        <h3 class="title">User Panel</h3>
+    </div>
+    <div class="aside">
+    <ul class="list-links">
+        <li><a href="{% url 'myaccount' %}">User Profile</a></li>
+        <li><a href="{% url 'myorders' %}">My Orders</a></li>
+        {% comment %} <li><a href="">My Order Product</a></li> {% endcomment %}
+        <li><a href="{% url 'comments' %}">My Comments</a></li>
+        <li><a href="{% url 'favourite' %}">My Favorits</a></li>
+        {% comment %} <li><a href="">My Products</a></li> {% endcomment %}
+        <li><a href="{% url 'user_logout' %}">Logout</a></li>
+    </ul>
+</div>
+</div>

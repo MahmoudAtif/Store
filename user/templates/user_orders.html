@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+    <!-- BREADCRUMB -->
+    <div id="breadcrumb">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a href="/">Home</a></li>
+                <li class="active">Order List</li>
+            </ul>
+        </div>
+    </div>
+    <!-- /BREADCRUMB -->
+    <!-- section -->
+    <div class="section">
+        <!-- container -->
+        <div class="container">
+            
+            <!-- row -->
+            <div class="row">
+                <div class="col-md-3">
+                    {% include "user_panel.html" %}
+                </div>
+
+                <div class="col-md-9">
+                    <div class="order-summary clearfix">
+                        <div class="section-title">
+                            <div class="store-filter clearfix">
+                                <div class="pull-left">
+                                    <div class="row-filter">
+                                        <a href="#"><i class="fa fa-th-large"></i></a>
+                                        <a href="#" class="active"><i class="fa fa-bars"></i></a>
+                                    </div>
+                                    
+                                    <div class="sort-filter">
+                                        <form method='GET'>								
+                                        <span class="text-uppercase">Sort By:</span>
+                                            <select name='status' class="input">
+                                                <option value="" disabled selected hidden>Status</option>
+                                                <option value='Pending'>Pending</option>
+                                                <option value='Delivered'>Delivered</option>
+                                                <option value='Canceled'>Canceled</option>
+                                            </select>
+                                            <button class="main-btn icon-btn" type='submit'> <i class="fa fa-arrow-down"></i></button>
+                                        </form> 
+                                        {% comment %} <a href="#" class="main-btn icon-btn"><i class="fa fa-arrow-down"></i></a> {% endcomment %}
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <h3 class="title">Order List</h3>
+                        </div>
+                        <table class="shopping-cart-table table">
+                            <tr>
+                                <th class="text-left">Code </th>
+                                <th class="text-left">Name </th>
+                                <th class="text-left">Total </th>
+                                <th class="text-left">Status </th>
+                                <th class="text-left">Date </th>
+                                {% comment %} <th class="text-left">products</th> {% endcomment %}
+                                <th class="text-left">Details </th>
+                                <th class="text-left">Delete </th>
+                            </tr>
+                            {% for order in orders %}
+                                <tr>
+                                    <td class="text-left">{{ order.code}} </td>
+                                    <td class="text-left">{{ order.user}} </td>
+                                    <td class="text-left">{{ order.total}} </td>
+                                   
+                                    {% if order.status == 'Pending' %}
+                                        <td class="text-left text-warning ">{{ order.status}} </td>
+                                    {% elif  order.status == 'Delivered' %}
+                                        <td class="text-success">{{ order.status}} </td>
+                                    {% else %}
+                                        <td class="text-left">{{ order.status}} </td>
+                                    {% endif %}
+                                    
+                                    <td class="text-left">{{ order.date_created}} </td>
+                                    {% comment %} {% for product in order.orderProduct.all %}
+                                    <td class="text-left">{{product}} </td>
+                                    {% endfor %} {% endcomment %}
+                                    <td class="text-left"><a class="btn primary-btn" href="{% url 'orderdetail' order.code %}"> Details </a></td>
+                                    
+                                    {% if order.status == 'Pending' or order.status == 'Canceled' %}
+                                        <td class="text-left"><a class="btn primary-btn " href="{% url 'delete_order' order.code %}"> Delete </a></td>
+                                    {% endif %}
+                                </tr>
+                            {% endfor %}
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+            <!-- /row -->
+        </div>
+        <!-- /container -->
+    </div>
+    <!-- /section -->
+
+{% endblock 'content' %}

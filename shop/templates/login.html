@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block 'content' %}
+	<!-- BREADCRUMB -->
+	<div id="breadcrumb">
+		<div class="container">
+			<ul class="breadcrumb">
+				<li><a href="{% url 'index' %}">Home</a></li>
+				<li class="active">login</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /BREADCRUMB -->
+
+	<!-- section -->
+	<div class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+				<div class="section-title">
+					<h3 class="title">Login Form</h3>
+				</div>
+
+				<div class="col-md-5">
+					<form class='col' method='POST'>
+						{% csrf_token %} 
+						<input class ='form-control' type='input' name='username' placeholder='Username'>
+						<br>				
+						<input class ='form-control' type='password' name='password' placeholder='Password' >				
+							
+						<br>				
+						<input class ="btn primary-btn" type='submit' value='Login'>				
+					</form>
+					<br>
+					{% if messages %}
+						{% for message in messages %}
+							<div class=" text-danger alert alert-{{message.tags}}" role="alert">
+								{{ message }}
+							</div>
+						{% endfor %}
+				 	{% endif %}
+				</div>
+				
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container --> 
+	</div>
+	<!-- /section -->
+{% endblock 'content' %}
+	
+
+	

@@ -1,0 +1,39 @@
+<ul class="size-option">
+    <li><span class="text-uppercase">Size:</span></li>
+    {% comment %} <li class="active"><a href="#">S</a></li> {% endcomment %}
+    {% comment %} <li><a href="#">XL</a></li> {% endcomment %}
+    {% for item in product.variant.all  %}
+    <li><a href="#">{{item.size}}</a></li>
+    {% endfor %}
+</ul>
+
+
+
+
+
+
+
+
+<form method='POST' >
+    {% csrf_token %}
+    <select name="size" id="size">
+        <option name="size" value="">select</option>
+        {% for item in product.variant.all %}
+             <option  name="size" value="{{item.size.id}}"><input type='submit'>{{item.size}} </input></option> 
+        {% endfor %}
+    </select>
+</form>
+
+
+
+
+
+
+
+
+<ul class="size-option">
+    <li><span class="text-uppercase">Size:</span></li>
+    {% for item in product.variant.all  %}
+    <li><a href="#">{{item.size}}</a></li>
+    {% endfor %}
+</ul>

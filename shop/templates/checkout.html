@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+
+{% block 'content' %}
+	
+	<!-- BREADCRUMB -->
+	<div id="breadcrumb">
+		<div class="container">
+			<ul class="breadcrumb">
+				<li><a href="{% url 'index' %}">Home</a></li>
+				<li class="active">Checkout</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /BREADCRUMB -->
+
+	<!-- section -->
+	<div class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+				<form method='POST' id="checkout-form" class="clearfix">
+					{% csrf_token %}
+					<div class="col-md-6">
+						<div class="billing-details">
+							{% if not request.user.is_authenticated %}
+								<p>Already a customer ? <a href="#">Login</a></p>
+							{% endif %}
+
+							<div class="section-title">
+								<h3 class="title">Shipping Details</h3>
+							</div>
+							<div class="form-group">
+								<input class="input" type="text" name="name" required placeholder="Your Name" value="{{request.user}}">
+							</div>
+	
+							{% comment %} <div class="form-group">
+								<input class="input" type="email" name="email" placeholder="Email" value="{{request.user.email}}">
+							</div> {% endcomment %}
+							<div class="form-group">
+								{% if profile.address %}
+									<input class="input" type="text" name="address" required placeholder="Address" value="{{profile.address}}">
+									{% else %}
+									<input class="input" type="text" name="address" required placeholder="Address">
+								{% endif %}
+							</div>
+							<div class="form-group">
+								{% if profile.city %}
+									<input class="input" type="text" name="city" required placeholder="City" value="{{profile.city}}">
+									{% else %}
+									<input class="input" type="text" name="city" required placeholder="City">
+								{% endif %}
+								
+							</div>
+							<div class="form-group">
+								{% if profile.country %}
+									<input class="input" type="text" name="country" required placeholder="Country" value="{{profile.country}}">
+									{% else %}
+									<input class="input" type="text" name="country" required placeholder="Country">
+								{% endif %}
+								
+							</div>
+							
+							<div class="form-group">
+								{% if profile.phone %}
+									<input class="input" type="text" name="phone" required placeholder="Telephone" value="{{profile.phone}}">
+									{% else %}
+									<input class="input" type="tel" name="phone" required placeholder="Telephone">
+								{% endif %}
+								
+							</div>
+							{% if carts %}
+							<div class="form-group">
+                                <button  type="submit" class="btn primary-btn">Complete Order</button>
+                            </div>
+							{% endif %}
+							<br>
+							{% if messages %}
+								{% for message in messages %}
+									<div class=" text-danger alert alert-{{message.tags}}" role="alert">
+										{{ message }}
+									</div>
+								{% endfor %}
+							{% endif %}
+							
+						</div>
+					</div>
+					<div class="col-md-6">
+                        <div class="shiping-methods">
+                            <div class="section-title">
+                                <h4 class="title">Payment Information</h4>
+                            </div>
+                            <p><label for="id_first_name">Total:  USD </label>
+                                <input type="text" name="total" class="input" disabled value={{ total }} ></p>
+                            <p><label for="id_first_name">Credit Card Holder</label>
+                                <input type="text" name="holder" class="input"  value=""></p>
+                            <p><label for="id_first_name">Credit Card Number</label>
+                                <input type="text" name="number" class="input"  value=""></p>
+                            <p><label for="id_first_name">Credit Exp Date/Year</label>
+                                <input type="text" name="ecpdate" class="input"  placeholder="mm/yy"></p>
+                            <p><label for="id_first_name">Security Number</label>
+                                <input type="text" name="secnumber" class="input"  value=""></p>
+                        </div>
+                    </div>
+				</form>
+
+				<div class="col-md-12">
+					<div class="order-summary clearfix">
+						<div class="section-title">
+							<h3 class="title">Order Review</h3>
+						</div>
+						<table class="shopping-cart-table table">
+							<thead>
+								<tr>
+									<th>Product</th>
+									<th></th>
+									<th class="text-center">Price</th>
+									<th class="text-center">Quantity</th>
+									<th class="text-center">Total</th>
+									<th class="text-right"></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for cart in carts  %}
+								<tr>
+									{% for image  in cart.product.productImage.all|slice:'1' %}
+										<td class="thumb"><img src="{{image.image.url}}" alt=""></td>
+									{% endfor %}
+									<td class="details">
+										<a href="#">{{cart.product}}</a>
+										<ul>
+											<li><span>Size: {{cart.variant.size}}</span></li>
+											<li><span>Color: {{cart.variant.color}}</span></li>
+										</ul>
+									</td>
+									{% if cart.product.discount %}
+										<td class="price text-center"><strong>${{cart.product.get_total}}</strong><br><del class="font-weak"><small>${{cart.product.price}}</small></del></td>
+									{% else %}
+										<td class="price text-center"><strong>${{cart.product.price}}</strong><br></td>
+									{% endif %}
+									<td class="qty text-center"><input class="input" type="number" disabled value="{{cart.quantity}}"></td>
+
+									{% if cart.product.discount %}
+										<td class="total text-center"><strong class="primary-color">${{cart.get_discount_price}}</strong></td>
+									{% else %}
+										<td class="total text-center"><strong class="primary-color">${{cart.get_price}}</strong></td>
+									{% endif %}
+									
+									
+								</tr>
+								{% endfor %}
+
+							</tbody>
+							<tfoot>
+								<tr>
+									<th class="empty" colspan="3"></th>
+									<th>SUBTOTAL</th>
+									<th colspan="2" class="sub-total">${{total}}</th>
+								</tr>
+								<tr>
+									<th class="empty" colspan="3"></th>
+									<th>SHIPING</th>
+									<td colspan="2">Free Shipping</td>
+								</tr>
+								<tr>
+									<th class="empty" colspan="3"></th>
+									<th>TOTAL</th>
+									<th colspan="2" class="total">${{total}}</th>
+								</tr>
+							</tfoot>
+						</table>
+						
+					</div>
+
+				</div>
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container -->
+	</div>
+	<!-- /section -->
+
+{% endblock 'content' %}

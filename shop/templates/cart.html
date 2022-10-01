@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+{% block 'content' %}
+
+	<!-- BREADCRUMB -->
+	<div id="breadcrumb">
+		<div class="container">
+			<ul class="breadcrumb">
+				<li><a href="#">Home</a></li>
+				<li class="active">Blank</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /BREADCRUMB -->
+
+	<!-- section -->
+	<div class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+				<div class="col-md-12">
+					<div class="order-summary clearfix">
+						<div class="section-title">
+							<h3 class="title">Order Review</h3>
+						</div>
+						<table class="shopping-cart-table table">
+							<thead>
+								<tr>
+									<th>Product</th>
+									<th></th>
+									<th class="text-center">Price</th>
+									<th class="text-center">Quantity</th>
+									<th class="text-center">Total</th>
+									<th class="text-right"></th>
+								</tr>
+							</thead>
+							<tbody>
+								{% for cart in carts  %}
+								<tr>
+									{% for image in cart.product.productImage.all|slice:'1' %}
+									<td class="thumb"><img src="{{image.image.url}}" alt=""></td>
+									{% endfor %}
+									<td class="details">
+										<a href="{% url 'product_details' cart.product.slug %}">{{cart.product.name}}</a>
+										<ul>
+											<li><span>Size: {{cart.variant.size}}</span></li>
+											<li><span>Color: {{cart.variant.color}}</span></li>
+										</ul>
+									</td>
+									{% if cart.product.discount %}
+										<td class="price text-center"><strong>${{cart.product.get_total}}</strong><br><del class="font-weak"><small>${{cart.product.price}}</small></del></td>
+									{% else %}
+										<td class="price text-center"><strong>${{cart.product.price}}</strong><br></td>
+									{% endif %}
+									
+										<td class="qty text-center"><input class="input" disabled type="number" value="{{cart.quantity}}"></td>
+									
+									{% if cart.product.discount %}
+										<td class="total text-center"><strong class="primary-color">${{cart.get_discount_price}}</strong></td>
+									{% else %}
+										<td class="total text-center"><strong class="primary-color">${{cart.get_price}}</strong></td>
+									{% endif %}
+									
+									<td class="text-right">
+										<a href="{% url 'delete_product_cart' cart.product.id %}" >
+										<button class="main-btn icon-btn"> 
+										<i class="fa fa-close"></i></button>
+										 </a>
+									</td> 
+									
+								</tr>
+								{% endfor %}
+
+							</tbody>
+							<tfoot>
+								<tr>
+									<th class="empty" colspan="3"></th>
+									<th>SUBTOTAL</th>
+									<th colspan="2" class="sub-total">${{total}}</th>
+								</tr>
+								<tr>
+									<th class="empty" colspan="3"></th>
+									<th>SHIPING</th>
+									<td colspan="2">Free Shipping</td>
+								</tr>
+								<tr>
+									<th class="empty" colspan="3"></th>
+									<th>TOTAL</th>
+									<th colspan="2" class="total">${{total}}</th>
+								</tr>
+							</tfoot>
+						</table>
+						<div class="pull-right">
+							{% if carts %}
+								<a href={% url 'checkout' %} class="primary-btn">Place Order</a>
+							{% endif %}
+						</div>
+					</div>
+
+				</div>
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container -->
+	</div>
+	<!-- /section -->
+
+{% endblock 'content' %}
+

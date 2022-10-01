@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block 'content' %}
+<!-- BREADCRUMB -->
+	<div id="breadcrumb">
+		<div class="container">
+			<ul class="breadcrumb">
+				<li><a href="#">Home</a></li>
+				<li class="active">Products</li>
+			</ul>
+		</div>
+	</div>
+	<!-- /BREADCRUMB -->
+
+	<!-- section -->
+	<div class="section">
+		<!-- container -->
+		<div class="container">
+			<!-- row -->
+			<div class="row">
+				<!-- MAIN -->
+				<div id="main" class="col-md-9">
+					
+
+					<!-- STORE -->
+					<div id="store">
+						<!-- row -->
+						<div class="row">
+							
+							{% if products %}
+								{% for product in products  %}
+								<!-- Product Single -->
+								<div class="col-md-4 col-sm-6 col-xs-6">
+									<div class="product product-single">
+										<div class="product-thumb">
+											<div class="product-label">
+												<span>New</span>
+												{% if product.discount %}
+												<span class="sale">-{{product.discount}}%</span>
+												{% endif %}
+											</div>
+											<a href="{% url 'product_details' product.slug %}"> <button class="main-btn quick-view"><i class="fa fa-search-plus"></i> Quick view</button></a>
+											{% for image in product.productImage.all|slice:'1' %}
+												<img src="{{image.image.url}}" alt="">
+											{% endfor %}
+										</div>
+										<div class="product-body">
+											{% if product.discount %}
+												<h3 class="product-price">${{product.get_total}} <del class="product-old-price">${{product.price}}</del></h3>
+											{% else %}
+												<h3 class="product-price">${{product.price}}</h3>
+											{% endif %}
+											<div class="product-rating">
+												<i class="fa fa-star"></i>
+												<i class="fa fa-star"></i>
+												<i class="fa fa-star"></i>
+												<i class="fa fa-star"></i>
+												<i class="fa fa-star-o empty"></i>
+											</div>
+											<h2 class="product-name"><a href="#">{{product.name}}</a></h2>
+											<div class="product-btns">
+												{% if request.user in product.wishlist.all %}
+													<a href="{% url 'add_to_favourite' product.id %}"> <button class="primary-btn icon-btn "><i class="fa fa-heart"></i></button> </a>
+												{% else %}
+													<a href="{% url 'add_to_favourite' product.id %}"> <button class="main-btn icon-btn "><i class="fa fa-heart"></i></button> </a>
+												{% endif %}
+												<button class="main-btn icon-btn"><i class="fa fa-exchange"></i></button>
+												<a href="{% url 'add_to_cart' product.id %}"><button class="primary-btn add-to-cart"><i class="fa fa-shopping-cart"></i> Add to Cart</button> </a>
+
+											</div>
+										</div>
+									</div>
+								</div>
+								<!-- /Product Single -->
+								{% endfor %}
+							{% else %}
+								<div class="center">
+									<div> No Products Available</div>
+								</div>
+							<!-- /Product Single -->
+							{% endif %}
+							
+
+						</div>
+						<!-- /row -->
+					</div>
+					<!-- /STORE -->
+				</div>
+				<!-- /MAIN -->
+			</div>
+			<!-- /row -->
+		</div>
+		<!-- /container -->
+	</div>
+	<!-- /section -->
+
+{% endblock 'content' %}

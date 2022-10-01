@@ -1,0 +1,16 @@
+<ul class="reviews-pages">
+    {% if objects.has_previous %}
+        <li><a href="?/page={{ objects.previous_page_number }}"><i class="fa fa-caret-left"></i></a></li>
+    {% endif %}
+    
+    
+    <span class="current">
+        Page {{ objects.number }} of {{ objects.paginator.num_pages }}.
+    </span>
+
+
+    {% if objects.has_next %}
+        <li><a href="?page={{objects.next_page_number}}"><i class="fa fa-caret-right"></i></a></li>
+    {% endif %}
+
+</ul>
