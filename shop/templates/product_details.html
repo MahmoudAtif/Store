@@ -146,7 +146,7 @@
 									<li><span class="text-uppercase">Size:</span></li>
 									{% for item in product.variant.all %}
 										<input required type="radio" value='{{item.id}}' name='size-color' /><label >{{item.size}}</label>
-										<li><a href="#" style="background-color:{{item.color.code}};"><br></a></li>
+										<li><a  style="background-color:{{item.color.code}};"><br></a></li>
 									{% endfor %}
 								</ul>
 								<br>

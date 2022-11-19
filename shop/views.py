@@ -156,14 +156,18 @@ def product_details(request,slug):
     if request.user.is_authenticated:
         if request.method=='POST':
             commentForm=CommentForm(request.POST)
-            if commentForm.is_valid():
-                data=Comment()
-                data.product= product
-                data.user= request.user
-                data.comment= commentForm.cleaned_data['comment']
-                data.rate= commentForm.cleaned_data['rate']   
-                data.save()
-                messages.success(request,'Thanks For Review ')
+            if not Comment.objects.filter(user=request.user , product=product):
+                if commentForm.is_valid():
+                    data=Comment()
+                    data.product= product
+                    data.user= request.user
+                    data.comment= commentForm.cleaned_data['comment']
+                    data.rate= commentForm.cleaned_data['rate']   
+                    data.save()
+                    messages.success(request,'Thanks For Review ')
+            else:
+                messages.warning(request,'You already commented')
+
         else:
             commentForm=CommentForm()      
     
