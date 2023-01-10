@@ -15,40 +15,14 @@ from django.core.paginator import Paginator , PageNotAnInteger , EmptyPage
 
 
 def index(request):
-    # categorys=Category.objects.all()
     products=Product.objects.filter(status=True)
-    latest_products=products.order_by('-id')
-
-    ############### Cart ####################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            # total_quantity+=item.quantity
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
-    ############### endCart #################
-   
-
+    latest_products=products.order_by('-id') 
     page='home'
     
     context={
         'page':page,
         'products':products,
         'latest_products':latest_products,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request, 'index.html',context)
 
@@ -66,55 +40,15 @@ def search(request):
     else:
         products=Product.objects.filter(status=True)
 
-     ############### Cart ####################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            # total_quantity+=item.quantity
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
-    ############### endCart #################
 
     context={
         'products':products,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }        
     return render(request, 'search.html',context)
 
 
 def products(request):
     products=Product.objects.filter(status=True)
-    ############### Cart ####################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            # total_quantity+=item.quantity
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
     colors=Color.objects.all()
     sizes=Size.objects.all()
 
@@ -134,9 +68,6 @@ def products(request):
     context={
         
         'products':objects,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
         'pro':pro,
         'colors':colors,
         'sizes':sizes,
@@ -171,29 +102,9 @@ def product_details(request,slug):
         else:
             commentForm=CommentForm()      
     
-        ####### Cart ######
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
     else:
         commentForm=CommentForm() 
-        carts=None
-        total=0
-        total_quantity=0      
         messages.warning(request, 'Login required')
-        ####### endCart ######
-    
-   
-
-
     #### pagination #############
     paginator=Paginator(comments , 5)
     page_number=request.GET.get('page')
@@ -205,9 +116,6 @@ def product_details(request,slug):
         'product':product,
         'commentForm':commentForm,
         'comments':page_comments,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
         'variant':variant
         
     }
@@ -217,32 +125,9 @@ def product_details(request,slug):
 
 def about(request):
     setting=Setting.objects.get(pk=1)
-
-    ############### Cart ####################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            # total_quantity+=item.quantity
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
-
+    
     context={
         'setting':setting,
-        # 'categorys':categorys,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
 
     return render(request,'about.html',context)
@@ -256,60 +141,20 @@ def contact(request):
             form.save()
             messages.success(request,'Your message sent sucessfully')
             return redirect('contact')
-    
-    ############### Cart ####################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
 
     context={
         'form':form,
         'setting':setting,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
-        
     }
     return render(request,'contactus.html',context)
 
 def product_category(request,id,slug):
     products=Product.objects.filter(category=id,status=True)
-    ############### Cart ####################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            # total_quantity+=item.quantity
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
-    
     if request.method == 'GET':
         ordering=request.GET.get('ordering')
         if ordering:
             products=products.order_by(ordering)
+   
     #### pagination
     paginator=Paginator(products , 10)
     page_number=request.GET.get('page')
@@ -317,9 +162,6 @@ def product_category(request,id,slug):
 
     context={
         'products':objects,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request, 'product_category.html',context)
 
@@ -367,29 +209,8 @@ def add_to_cart(request, id):
          
 
 def cart(request):
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
 
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
-
-    
     context={
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request,'cart.html',context)
 

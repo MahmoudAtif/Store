@@ -11,30 +11,10 @@ from .models import*
 # Create your views here.
 
 
-
+@login_required(login_url='login_page')
 def checkout(request):
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-        
-        profile=Profile.objects.get(user=request.user)
-
-    else:
-        carts=None
-        profile=None
-        total=0
-        total_quantity=0 
-
-
+    carts=ShopCart.objects.filter(user=request.user,status='pending')
+    profile=Profile.objects.get(user=request.user)
     if request.method=='POST':
         form=OrderForm(request.POST)
         if form.is_valid():
@@ -45,6 +25,12 @@ def checkout(request):
             data.city=form.cleaned_data['city']
             data.country=form.cleaned_data['country']
             data.phone=form.cleaned_data['phone']
+            total=0
+            for item in carts:
+                if item.product.discount:
+                    total+=item.get_discount_price
+                else:
+                    total+= item.get_price
             data.total=total
             data.code=get_random_string(5).upper()
             data.save()
@@ -70,9 +56,6 @@ def checkout(request):
         form=OrderForm()
 
     context={
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
         'profile':profile,
     }
     return render(request , 'checkout.html',context)

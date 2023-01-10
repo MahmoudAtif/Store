@@ -52,30 +52,9 @@ def user_logout(request):
 
 @login_required(login_url='login_page')
 def myAccount(request):
-    
     profile=Profile.objects.get(user=request.user)
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0
-
     context={
         'profile':profile,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request, 'user_profile.html',context)
 
@@ -96,29 +75,10 @@ def update_myAccount(request):
     else:    
         form=ProfileForm(instance=profile)
     
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0
     
     context={
         'profile':profile,
         'form':form,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request, 'user_update.html',context)
 
@@ -131,25 +91,9 @@ def myorders(request):
             orders=Order.objects.filter(user=request.user , status=status)
         else:
             orders=Order.objects.filter(user=request.user).order_by('-date_created')
-    
-    carts=ShopCart.objects.filter(user=request.user,status='pending')
-    total=0
-    total_quantity=0   
-    
-    for item in carts:
-        if item.product.discount:
-            total+=item.get_discount_price
-        else:
-            total+= item.get_price
-    
-    for item in carts:
-        total_quantity+=item.quantity
 
     context={
         'orders':orders,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request , 'user_orders.html',context)
 
@@ -157,24 +101,9 @@ def myorders(request):
 @login_required(login_url='login_page')
 def myOrder_detail(request,code):
     order=Order.objects.get(code=code )
-
-    carts=ShopCart.objects.filter(user=request.user,status='pending')
-    total=0
-    total_quantity=0   
-    for item in carts:
-        if item.product.discount:
-            total+=item.get_discount_price
-        else:
-            total+= item.get_price
-    
-    for item in carts:
-        total_quantity+=item.quantity   
-
+ 
     context={
         'order':order,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request , 'user_order_detail.html',context)
 
@@ -183,28 +112,8 @@ def myOrder_detail(request,code):
 def favourite(request):
     products=Product.objects.filter(wishlist=request.user)
 
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0
-
     context={
         'products':products,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
     return render(request, 'favourite.html',context)
 
@@ -227,62 +136,21 @@ def comments(request):
     categorys=Category.objects.all()
     products=Product.objects.filter(status=True)
 
-
-    ############### Cart ##################
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            # total_quantity+=item.quantity
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
-    ########## endcart ##############
-
     context={
         'comments':comments,
         'categorys':categorys,
         'products':products,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
-
     }
     return render(request , 'user_comments.html',context)
 
 
 def change_password(request):
-    if request.user.is_authenticated:
-        carts=ShopCart.objects.filter(user=request.user,status='pending')
-        total=0
-        total_quantity=0   
-        for item in carts:
-            if item.product.discount:
-                total+=item.get_discount_price
-            else:
-                total+= item.get_price
-        
-        for item in carts:
-            total_quantity+=item.quantity
-    else:
-        carts=None
-        total=0
-        total_quantity=0 
 
     if request.method=='POST':
         form = PasswordChangeForm(request.user, request.POST)
         if form.is_valid():
             user=form.save()
-            update_session_auth_hash(request , user)
+            update_session_auth_hash(request, user)
             messages.success(request , 'Password Change Successfully')
         else:
             messages.warning(request , str(form.errors))                
@@ -291,9 +159,6 @@ def change_password(request):
     
     context={
         'form':form,
-        'carts':carts,
-        'total':total,
-        'total_quantity':total_quantity,
     }
 
     return render(request , 'change_password.html',context)
